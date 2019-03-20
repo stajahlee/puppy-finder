@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import SwipeableViews from 'react-swipeable-views';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import puppyIcon from '../../assets/images/puppy.jpg';
+import PuppyCard from '../PuppyCard';
 
 const styles = theme => ({
   container: {
@@ -38,9 +39,60 @@ class SwipePuppyImagesDialog extends Component {
       images: [],
       canines: []
     };
+
+    this.renderPuppyCards = this.renderPuppyCards.bind(this);
+    this.cleanPuppyData = this.cleanPuppyData.bind(this);
   }
 
-  componentDidMount(){}
+  componentDidMount() {
+    fetch('http://localhost:8080/getPuppies')
+      .then(results => {
+        if (results) {
+          return results.json();
+        }
+        else {
+          console.log('Results unable to be fetched.')
+        }
+      }).then(data => {
+        this.cleanPuppyData(data);
+    });
+  }
+
+  cleanPuppyData(data) {
+    let titles = [],
+        images = [],
+        canines = [];
+
+    for (let i in data) {
+        titles.push(data[i].title);
+        images.push(data[i].image);
+        canines.push(data[i].canines);
+    }
+    
+    this.setState({
+      titles: titles,
+      images: images,
+      canines: canines
+    });
+}
+
+  renderPuppyCards() {
+    let { titles, images, canines } = this.state,
+        numCards = titles.length,
+        cards = [];
+
+    for (let i = 0; i < numCards; i++){
+      let puppyCard = (
+            <PuppyCard
+              title={titles[i]}
+              image={images[i]}
+              canines={canines[i]} />
+      );
+      cards.push(puppyCard);
+    }
+
+    return cards;
+  }
 
   // action functins for swipeable dialog
   handleNext = () => {
@@ -99,7 +151,9 @@ class SwipePuppyImagesDialog extends Component {
 
                 </div>
               </Paper>
-                
+              
+              { this.renderPuppyCards() }
+
             </SwipeableViews>
 
             <br />

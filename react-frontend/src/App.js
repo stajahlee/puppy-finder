@@ -2,8 +2,6 @@
 import React, { Component } from "react";
 import Main from "./components/Main";
 
-import './assets/css/index.css';
-
 document.body.style = 'background: #efeff0;';
 
 class App extends Component {
